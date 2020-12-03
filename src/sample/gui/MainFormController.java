@@ -8,9 +8,12 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Control;
+import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import sample.models.Bush;
@@ -46,26 +49,29 @@ public class MainFormController implements Initializable {
         TableColumn<Plants, String> heightColumn = new TableColumn<>("Высота, см");
         heightColumn.setCellValueFactory(new PropertyValueFactory<>("height"));
         TableColumn<Plants, String> descriptionColumn = new TableColumn<>("Описание");
+        descriptionColumn.setCellFactory(tc -> {
+            TableCell<Plants, String> cell = new TableCell<>();
+            Text text = new Text();
+            cell.setGraphic(text);
+            cell.setPrefHeight(Control.USE_COMPUTED_SIZE);
+            text.wrappingWidthProperty().bind(descriptionColumn.widthProperty());
+            text.textProperty().bind(cell.itemProperty());
+            return cell ;
+        });
         // если хотим что-то более хитрое выводить, то используем лямбда выражение
         descriptionColumn.setCellValueFactory(cellData -> {
-            // плюс надо обернуть возвращаемое значение в обертку свойство
+//             плюс надо обернуть возвращаемое значение в обертку свойство
             return new SimpleStringProperty(cellData.getValue().getDescription());
         });
         // подцепляем столбцы к таблице
         mainTable.getColumns().addAll(titleColumn, heightColumn, descriptionColumn);
-
-
-
-
-
-
     }
 
 
     public void onAddClick(ActionEvent actionEvent) throws IOException {
 
         FXMLLoader loader = new FXMLLoader();
-        loader.setLocation(getClass().getResource("FoodForm.fxml"));
+        loader.setLocation(getClass().getResource("PlantForm.fxml"));
         Parent root = loader.load();
 
         // ну а тут создаем новое окно
